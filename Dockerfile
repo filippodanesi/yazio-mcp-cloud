@@ -1,7 +1,11 @@
-FROM ghcr.io/yazio-community/yazio-mcp-server:1.4.2
+FROM python:3.12-slim
 
-USER root
-RUN apk add --no-cache caddy
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends caddy \
+ && rm -rf /var/lib/apt/lists/* \
+ && pip install --no-cache-dir yazio-mcp-server \
+ && useradd -u 10001 -m app
+
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY start.sh /start.sh
 RUN chmod 755 /start.sh
