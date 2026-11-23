@@ -1,0 +1,23 @@
+{
+	admin off
+	auto_https off
+}
+
+:{$PORT} {
+	# Only requests under the secret path reach the Yazio server
+	handle /{$SECRET_PATH}/* {
+		uri strip_prefix /{$SECRET_PATH}
+		reverse_proxy 127.0.0.1:8931 {
+			header_up Host {upstream_hostport}
+			header_up Authorization "Basic {$YAZIO_BASIC}"
+			header_up -X-Auth-Username
+			header_up -X-Auth-Password
+			flush_interval -1
+		}
+	}
+
+	# Everything else: not found
+	handle {
+		respond 404
+	}
+}
