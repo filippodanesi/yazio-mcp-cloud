@@ -11,10 +11,10 @@ if [ "${#SECRET_PATH}" -lt 24 ]; then
 fi
 
 export PORT="${PORT:-8080}"
-YAZIO_BASIC="$(printf '%s:%s' "$YAZIO_USERNAME" "$YAZIO_PASSWORD" | base64 | tr -d '\n')"
+YAZIO_BASIC="$(printf '%s:%s' "$YAZIO_USERNAME" "$YAZIO_PASSWORD" | base64 -w0)"
 export YAZIO_BASIC
 
 # Yazio MCP server, reachable only from inside the container
-yazio-mcp-server --host 127.0.0.1 &
+yazio-mcp-server --host 127.0.0.1 --port 8931 &
 
 exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
